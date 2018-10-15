@@ -3,8 +3,8 @@ import {
   formatNumber,
   getCountryCallingCode,
   AsYouType,
-  Metadata,
-} from 'libphonenumber-js/custom';
+  Metadata
+} from "libphonenumber-js/custom";
 
 /**
  * Decides which country should be pre-selected
@@ -64,9 +64,9 @@ export function getCountrySelectOptions(
   includeInternationalOption
 ) {
   // Generates a `<Select/>` option for each country.
-  const country_select_options = countries.map((country) => ({
+  const country_select_options = countries.map(country => ({
     value: country,
-    label: country_names[country],
+    label: country_names[country]
   }));
 
   // Sort the list of countries alphabetically.
@@ -75,7 +75,7 @@ export function getCountrySelectOptions(
   // Add the "International" option to the country list (if suitable)
   if (includeInternationalOption) {
     country_select_options.unshift({
-      label: country_names.ZZ,
+      label: country_names.ZZ
     });
   }
 
@@ -91,7 +91,7 @@ export function getCountrySelectOptions(
  * // returns `{ country: 'RU', phone: '8005553535' }`
  */
 export function parsePhoneNumber(value, metadata) {
-  return parseNumber(value || '', metadata);
+  return parseNumber(value || "", metadata);
 }
 
 /**
@@ -106,7 +106,7 @@ export function parsePhoneNumber(value, metadata) {
  * // returns '88005553535'
  */
 export function generateNationalNumberDigits(parsed_phone, metadata) {
-  return formatNumber(parsed_phone, 'National', metadata).replace(/\D/g, '');
+  return formatNumber(parsed_phone, "National", metadata).replace(/\D/g, "");
 }
 
 /**
@@ -141,7 +141,7 @@ export function migrateParsedInputForNewCountry(
     // The phone number may be incomplete.
     // The phone number entered not necessarily starts with
     // the previously selected country phone prefix.
-    if (value[0] === '+') {
+    if (value[0] === "+") {
       // If the international phone number is for the new country
       // then convert it to local if required.
       if (preferNationalFormat) {
@@ -173,7 +173,7 @@ export function migrateParsedInputForNewCountry(
   // If switching to "International" from a country.
   else {
     // If the phone number was entered in national format.
-    if (value[0] !== '+') {
+    if (value[0] !== "+") {
       // Format the national phone number as an international one.
       // The phone number entered not necessarily even starts with
       // the previously selected country phone prefix.
@@ -187,7 +187,7 @@ export function migrateParsedInputForNewCountry(
       return formatNumber(
         partial_national_significant_number,
         previous_country,
-        'E.164',
+        "E.164",
         metadata
       );
     }
@@ -203,14 +203,10 @@ export function migrateParsedInputForNewCountry(
  * @param  {[object} metadata - `libphonenumber-js` metadata.
  * @return {string?}
  */
-export function e164(number, country, metadata) {
+export function e164(number = "", country, metadata) {
   // If the phone number is being input in international format.
-  if (number[0] === '+') {
-    // If it's just the `+` sign then return nothing.
-    if (number === '+') {
-      return;
-    }
-
+  if (number.startsWith("+")) {
+    console.log("~~~~", number);
     // If there are any digits then the `value` is returned as is.
     return number;
   }
@@ -218,7 +214,7 @@ export function e164(number, country, metadata) {
   // For non-international phone numbers
   // an accompanying country code is required.
   if (!country) {
-    return;
+    return number;
   }
 
   const partial_national_significant_number = get_national_significant_number_part(
@@ -231,7 +227,7 @@ export function e164(number, country, metadata) {
     return formatNumber(
       partial_national_significant_number,
       country,
-      'E.164',
+      "E.164",
       metadata
     );
   } else {
@@ -288,7 +284,7 @@ export function getCountryForParsedInput(
   includeInternationalOption,
   metadata
 ) {
-  if (parsed_input === '+') {
+  if (parsed_input === "+") {
     // Don't change the currently selected country yet.
     return country;
   }
@@ -336,7 +332,7 @@ export function get_country_from_possibly_incomplete_international_phone_number(
   formatter.input(number);
   // `001` is a special "non-geograpical entity" code
   // in Google's `libphonenumber` library.
-  if (formatter.country === '001') {
+  if (formatter.country === "001") {
     return;
   }
   return formatter.country;
@@ -371,12 +367,12 @@ export function strip_country_calling_code(number, country, metadata) {
   // doesn't have to iterate through all country calling codes.
   if (country) {
     const country_calling_prefix =
-      '+' + getCountryCallingCode(country, metadata);
+      "+" + getCountryCallingCode(country, metadata);
 
     // If `country` fits the actual `number`.
     if (number.length < country_calling_prefix.length) {
       if (country_calling_prefix.indexOf(number) === 0) {
-        return '';
+        return "";
       }
     } else {
       if (number.indexOf(country_calling_prefix) === 0) {
@@ -390,12 +386,12 @@ export function strip_country_calling_code(number, country, metadata) {
   for (const country_calling_code of Object.keys(
     metadata.country_calling_codes
   )) {
-    if (number.indexOf(country_calling_code) === '+'.length) {
-      return number.slice('+'.length + country_calling_code.length);
+    if (number.indexOf(country_calling_code) === "+".length) {
+      return number.slice("+".length + country_calling_code.length);
     }
   }
 
-  return '';
+  return "";
 }
 
 /**

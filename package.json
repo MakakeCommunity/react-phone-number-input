@@ -1,5 +1,5 @@
 {
-  "name": "react-phone-number-input",
+  "name": "@kicklox/react-phone-number-input",
   "version": "2.2.14",
   "description": "Telephone input for React",
   "main": "index.commonjs.js",
